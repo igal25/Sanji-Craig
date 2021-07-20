@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphSampleComponent } from './graph-sample/graph-sample.component';
@@ -8,13 +7,14 @@ import { GraphSampleComponent } from './graph-sample/graph-sample.component';
 @NgModule({
   declarations: [
     AppComponent,
-    GraphSampleComponent
+    GraphSampleComponent,
+    
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
   ],
-  providers: [],
+  providers: [  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
