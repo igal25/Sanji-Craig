@@ -13,8 +13,8 @@ import {valueOrDefault} from '../../../node_modules/chart.js/helpers/helpers.esm
 export class GraphSampleComponent implements OnInit {
 
   chart: any;
-  DATA_COUNT = 6;
-  NUMBER_CFG = {count: this.DATA_COUNT, min: -100, max: 100};
+  DATA_COUNT = 1000;
+  NUMBER_CFG = {count: this.DATA_COUNT, min: -180, max: 180};
 
 
   constructor() { }
@@ -23,10 +23,17 @@ export class GraphSampleComponent implements OnInit {
     this.chart = document.getElementById("scattered_chart");
     Chart.register(...registerables);
     this.loadChart();
+    setInterval( () => { 
+      this.chart.destroy();
+      this.chart = document.getElementById("scattered_chart");
+      Chart.register(...registerables);
+      this.updateChart(); },
+     3000
+    );
   }
 
   loadChart() {
-    new Chart(this.chart, {
+    this.chart = new Chart(this.chart, {
       type:'scatter',
       data: {
         datasets: [
@@ -35,17 +42,11 @@ export class GraphSampleComponent implements OnInit {
             data: this.points(this.NUMBER_CFG),
             fill: false,
             borderColor: this.CHART_COLORS.red,
-            backgroundColor: this.transparentize(this.CHART_COLORS.red, 0.5),
+            backgroundColor: this.transparentize(this.CHART_COLORS.red, 1),
           },
-          {
-            label: 'Dataset 2',
-            data: this.points(this.NUMBER_CFG),
-            fill: false,
-            borderColor: this.CHART_COLORS.blue,
-            backgroundColor: this.transparentize(this.CHART_COLORS.blue, 0.5),
-          }
         ]
-      },options: {
+      },
+      options: {
         responsive: true,
         plugins: {
           title: {
@@ -63,10 +64,47 @@ export class GraphSampleComponent implements OnInit {
             max: 100,
           }
         },
-
+         
       }
     })
   }
+
+  updateChart(){
+    this.chart = new Chart(this.chart,{
+      type:'scatter',
+      data: {
+        datasets: [
+          {
+            label: 'Dataset 1',
+            data: this.points(this.NUMBER_CFG),
+            fill: false,
+            borderColor: this.CHART_COLORS.red,
+            backgroundColor: this.transparentize(this.CHART_COLORS.red, 1),
+          },
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Axis Center Positioning'
+          }
+        },
+        scales: {
+          x: {
+            min: -180,
+            max: 180,
+          },
+          y: {
+            min: 0,
+            max: 100,
+          }
+        },
+         
+      }
+    })
+}
   _seed = Date.now();
 
   srand(seed:any) {
