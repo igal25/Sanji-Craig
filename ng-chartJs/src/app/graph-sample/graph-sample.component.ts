@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Chart, registerables, Point, Interaction } from 'chart.js';
+import { Chart, registerables, Point, Interaction, ChartEvent, TooltipItem } from 'chart.js';
 import colorLib from '@kurkle/color';
 import { DateTime } from 'luxon';
 //import 'chartjs-adapter-luxon';
@@ -18,13 +18,12 @@ export class GraphSampleComponent implements OnInit {
   NUMBER_CFG = { count: this.DATA_COUNT, min: -180, max: 180 };
 
 
-  constructor() { }
+  constructor() {  }
   
   ngOnInit(): void {
     this.chart = document.getElementById("scattered_chart");
     Chart.register(...registerables);
     this.loadChart();
-
     setInterval(() => {
       this.chart.destroy();
       this.chart = document.getElementById("scattered_chart");
@@ -33,10 +32,19 @@ export class GraphSampleComponent implements OnInit {
     },
       30000);
   }
-    func1(x:MouseEvent){
-        alert(`${x.x} and ${x.y}`);
-      }
 
+  clickEventHandler(x:ChartEvent){
+     alert(`${x.x} and ${x.y}`);
+    // var element = this.chart.chartinstance.get(mouseEvent);
+    // if (element.length > 0) {
+    //   element[0]._view.backgroundColor = '#FFF';
+    //   this.chart.update();
+    // }
+    // else 
+    //   console.log("no element in `${mouseEvent.x} and ${mouseEvent.y}`");
+      
+  }
+  
 
   loadChart() {
     this.chart = new Chart(this.chart, {
@@ -55,11 +63,18 @@ export class GraphSampleComponent implements OnInit {
         ]
       },
       options: {
-        events: ['click'],
+       onClick:(x)=>this.clickEventHandler(x),
         responsive: true,
         plugins: {
           
-          tooltip: { mode: 'point',enabled:false, },
+          tooltip: {
+             mode: 'point',enabled:true,
+             callbacks: {
+              label: (tooltipItem: TooltipItem<"scatter">): string => {
+                return  "ang" + tooltipItem.element.x + "fre" + tooltipItem.element.y;
+              }
+             }
+         },
           legend: {
           },
           title: {
@@ -68,9 +83,13 @@ export class GraphSampleComponent implements OnInit {
           },
         },
         scales: {
+          
           x: {
             min: -180,
             max: 180,
+            ticks: {
+              
+            }
           },
           y: {
             min: 0,
@@ -79,9 +98,13 @@ export class GraphSampleComponent implements OnInit {
         }
       }
     });
-    onclick=(x)=>this.func1(x);
+    //onclick=(x)=>this.func1(x);
+    
   }
 
+  getPointRepresantationOnhHover(x:ChartEvent): string {
+    return "ang" + x.x + "fre" + x.y;
+  }
 
 
 
