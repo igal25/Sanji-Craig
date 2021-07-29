@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Chart, registerables, Point, Interaction, ChartEvent, TooltipItem, ChartItem, ScatterDataPoint, ChartConfiguration } from 'chart.js';
+import { Chart, registerables, Point, Interaction, ChartEvent, TooltipItem, ChartItem, ScatterDataPoint, ChartConfiguration, Scale } from 'chart.js';
 import colorLib from '@kurkle/color';
 import { DateTime } from 'luxon';
-//import 'chartjs-adapter-luxon';
 import { valueOrDefault } from '../../../node_modules/chart.js/helpers/helpers.esm';
 import { Action } from 'rxjs/internal/scheduler/Action';
-//import { isUndefined } from 'util';
+import { timer } from 'rxjs';
+// import zoomPlugin from 'chartjs-plugin-zoom';
 
 @Component({
   selector: 'app-graph-sample',
@@ -13,7 +13,6 @@ import { Action } from 'rxjs/internal/scheduler/Action';
   styleUrls: ['./graph-sample.component.css']
 })
 export class GraphSampleComponent implements OnInit {
-
   chart:Chart;
   chartitem:ChartItem
   DATA_COUNT = 1000;
@@ -23,206 +22,22 @@ export class GraphSampleComponent implements OnInit {
   constructor() { this.chartitem = document.getElementById("scattered_chart")as ChartItem;
   Chart.register(...registerables);
   this.chart=new Chart(this.chartitem,{type:'scatter',data:{datasets:[]},options:{}})
-  // this.chart = new Chart(this.chartitem, {
-  //   type: 'scatter',
-    
-  //   data: {
-  //     datasets: [
-  //       {
-          
-  //         label: 'Dataset',
-  //         data: this.points(this.NUMBER_CFG),
-  //         fill: false,
-  //         borderColor: this.CHART_COLORS.red,
-  //         backgroundColor: this.transparentize(this.CHART_COLORS.red, 1),
-  //         pointHoverRadius: 7,
-  //         pointHitRadius: 4,
-  //         pointStyle: 'rect',
-  //         pointHoverBackgroundColor: 'blue'
-          
-  //       },
-  //     ]
-  //   },
-    
-  //   options: {
-      
-  //     onClick:(ev)=>this.clickEventHandler(ev),
-  //     responsive: true,
-  //     plugins: {
-        
-  //       tooltip: {
-          
-  //         mode: 'point',
-  //         enabled:true,
-  //         callbacks: {
-  //           label: (tooltipItem: TooltipItem<"scatter">)   => {
-  //             return  ["ang: " + tooltipItem.element.x, "fre: " + tooltipItem.element.y];
-  //           },
-  //           footer: (tooltipItem: TooltipItem<"scatter">[])   => {
-  //             return  "IGAL";
-  //           }
-            
-  //         }
-  //       },
-  //       legend: {
-  //       },
-  //       title: {
-  //         display: true,
-  //         text: 'Axis Center Positioning'
-  //       },
-  //     },
-  //     scales: {
-  //       x: {
-  //         min: -180,
-  //         max: 180,
-          
-  //       },
-  //       y: {
-  //         min: 0,
-  //         max: 100,
-  //       },
-  //       z: {
-  //         min: 0,
-  //         max: 100,
-  //         position: "right"
-  //       }
-  //     }
-  //   }
-  // });  }
+  
 }
   ngOnInit(): void {
-     this.chartitem = document.getElementById("scattered_chart")as ChartItem ;
-     Chart.register(...registerables);
+    this.chartitem = document.getElementById("scattered_chart")as ChartItem ;
+    Chart.register(...registerables);
+    // Chart.register(zoomPlugin);
+
     this.loadChart();
-    this.func1();
     setInterval(() => {
-      this.chart.destroy();
-      this.chartitem = document.getElementById("scattered_chart") as ChartItem ;
-      Chart.register(...registerables);
-      this.loadChart();
+      this.updateChartData();
+      this.chart.update();
     },
       30000);
   }
 
-  clickEventHandler(ev:ChartEvent,chart2:any){
-    var CHART=chart2 as Chart
-    var temp=CHART.getActiveElements();
-    //console.log(temp[0])
-    if( temp[0]!==undefined){
-      console.log(`${ev.x} and ${ev.y}`);
-      
-    }
-    else
-     alert("igal");
-    //  clickEventHandler1(ev1:ChartEvent,linechart:any){
-    //   var linechart1=linechart as Chart;
-    //   var activePoints = linechart1.getActiveElements();
-    //   //console.log(linechart1.getActiveElements().length)
-    //   if(linechart1.getActiveElements().length>0)
-    //   console.log(activePoints[0].index+1);
-    // }
-    // var element = this.chart.chartinstance.get(mouseEvent);
-    // if (element.length > 0) {
-    //   element[0]._view.backgroundColor = '#FFF';
-    //   this.chart.update();
-    // }
-    // else 
-    //   console.log("no element in `${mouseEvent.x} and ${mouseEvent.y}`");
-//     var data1 = {
-//       labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-//       datasets: [
-//           {
-//               label: "Prime and Fibonacci",
-//               fill: false,
-//               borderColor: "green",
-//               pointColor: "white",
-//               pointStrokeColor: "#fff",
-//               pointHighlightFill: "#fff",
-//               pointHighlightStroke: "rgba(220,220,220,1)",
-//               data: [12, 13, 15, 17, 111, 113, 117, 9, 3, 0]
-//           },
-//           {
-//               label: "My Second dataset",
-//               fill: false,
-//               borderColor: "red",
-//               pointColor: "rgba(151,187,205,1)",
-//               pointStrokeColor: "#fff",
-//               pointHighlightFill: "#fff",
-//               pointHighlightStroke: "rgba(151,187,205,1)",
-//               data: [2, 3, 5, 7, 11, 13, 17, 13, 21, 34]
-//           }
-//       ]
-//   };
-//  // var ctx:ChartItem;
-//   var ctx=document.getElementById('chart1') as ChartItem;
-//     var lineChart = new Chart(ctx, {
-//       type: 'line',
-//       data: data1,
-//       options: {
-//         responsive: true
-//       }});
-//     var activePoints = lineChart.getActiveElements();
-//     console.log(activePoints);
-    // if (activePoints.length) {
-    //   var mouse_position = this.chart.getRelativePosition(ev, this.chart.chart);
-
-    //   activePoints = $.grep(activePoints,function(activePoint, index) {
-    //     var leftX = activePoint._model.x - 5,
-    //         rightX = activePoint._model.x + 5,
-    //         topY = activePoint._model.y + 5,
-    //         bottomY = activePoint._model.y - 5;
-
-    //     return mouse_position.x >= leftX && mouse_position.x <=rightX && mouse_position.y >= bottomY && mouse_position.y <= topY;
-    //   });
-    //   console.log(activePoints[0]);
-    // }     
-  }
-  func1(){
-    var data1 = {
-      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-      datasets: [
-          {
-              label: "Prime and Fibonacci",
-              fill: false,
-              borderColor: "green",
-              pointColor: "white",
-              pointStrokeColor: "#fff",
-              pointHighlightFill: "#fff",
-              pointHighlightStroke: "rgba(220,220,220,1)",
-              data: [12, 13, 15, 17, 111, 113, 117, 9, 3, 0]
-          },
-          {
-              label: "My Second dataset",
-              fill: false,
-              borderColor: "red",
-              pointColor: "rgba(151,187,205,1)",
-              pointStrokeColor: "#fff",
-              pointHighlightFill: "#fff",
-              pointHighlightStroke: "rgba(151,187,205,1)",
-              data: [2, 3, 5, 7, 11, 13, 17, 13, 21, 34]
-          }
-      ]
-  };
- // var ctx:ChartItem;
-  var ctx=document.getElementById('chart1') as ChartItem;
-  var lineChart:Chart;
-   lineChart = new Chart(ctx, {
-      type: 'line',
-      data: data1,
-      options: {
-        responsive: true,
-        
-        onClick:(ev)=>this.clickEventHandler1(ev,lineChart)
-      }});
-    
-  }
-  clickEventHandler1(ev1:ChartEvent,linechart:any){
-    var linechart1=linechart as Chart;
-    var activePoints = linechart1.getActiveElements();
-    //console.log(linechart1.getActiveElements().length)
-    if(linechart1.getActiveElements().length>0)
-    console.log(activePoints[0].index+1);
-  }
+  
   loadChart() {
     this.chart = new Chart(this.chartitem, {
       type: 'scatter',
@@ -230,30 +45,55 @@ export class GraphSampleComponent implements OnInit {
       data: {
         datasets: [
           {
-            
             label: 'Dataset',
-            data:[[1,2], [10,3], 15, 17, 111, 113, 117, 9, 3, 0],
-            //data: this.points(this.NUMBER_CFG),
+            data: this.points(this.NUMBER_CFG),
             fill: false,
             borderColor: this.CHART_COLORS.red,
             backgroundColor: this.transparentize(this.CHART_COLORS.red, 1),
             pointHoverRadius: 7,
             pointHitRadius: 4,
-            pointStyle: 'rect',
-            pointHoverBackgroundColor: 'blue'
+            //hit:120,
+            pointStyle: 'star',
+            pointHoverBackgroundColor: 'blue',
             
           },
         ]
       },
       
       options: {
-        
-        onClick:(ev)=>this.clickEventHandler(ev,this.chart),
+        onClick: (ev)=>this.clickEventHandler(ev,this.chart),
+        // oncontextmenu:(ev:MouseEvent)=>this.contextmenuEventHandler(ev,this.chart),
+        onContextMenu: (ev:any)=>{console.log("brigal");
+        },
         responsive: true,
         plugins: {
+          autocolors: false,
+          // annotation: {
+          //   annotations: {
+          //     line1: {
+          //       type: 'line',
+          //       yMin: 60,
+          //       yMax: 60,
           
+          //       borderColor: 'rgb(255, 99, 132)',
+          //       borderWidth: 2,
+          //     } 
+          //   }
+          // },
+
+          // zoom: {
+          //   zoom: {
+          //     wheel: {
+          //       enabled: true,
+          //     },
+          //     pinch: {
+          //       enabled: true
+          //     },
+          //     mode: 'xy',
+          //   }
+          // }, 
           tooltip: {
-            
+            usePointStyle: true,
             mode: 'point',
             enabled:true,
             callbacks: {
@@ -274,32 +114,82 @@ export class GraphSampleComponent implements OnInit {
           },
         },
         scales: {
+         
           x: {
             min: -180,
             max: 180,
-            
+            ticks: {
+              stepSize: 20
+            }
           },
           y: {
             min: 0,
             max: 100,
+            ticks: {
+              // Include a dollar sign in the ticks
+              callback: (value:number, index, values) => {
+                var ticks = [10 , 40 , 50 , 100];
+                if(ticks.includes(value )) {
+                  return value;
+                }
+                return "";
+              }
+            }
           },
           z: {
             min: 0,
             max: 100,
-            position: "right"
+            position: "right",
+            ticks: {
+              fontColor:'#fff'
+            },
+          }
+        },
+        animation: {
+          backgroundColor: {
+            type: "color",
+            from: "red",
+            to: "green",
+            duration: 700,
+            loop: true,
           }
         }
-      }
+      },
     }as ChartConfiguration);
-    //onclick=(x)=>this.func1(x);
     
 
+  }
+
+  updateChartData() {
+    this.chart.data.datasets[0].data = this.points(this.NUMBER_CFG) as [];
   }
 
   getPointRepresantationOnhHover(x:ChartEvent): string {
     return "ang" + x.x + "fre" + x.y;
   }
 
+  clickEventHandler(ev:ChartEvent,chart2:any){
+    console.log(ev.type)
+    var CHART=chart2 as Chart
+    var temp=CHART.getActiveElements();
+    if( temp[0]!==undefined){
+     // console.log(`${ev.x} and ${ev.y}`);
+      console.log(temp[0].element.x+"   "+temp[0].element.y)
+      //CHART.data.datasets[0].indexAxis.
+      
+      this.chart.data
+      this.chart.update();
+    }
+    else
+     console.log("igal");
+  }
+  contextmenuEventHandler(ev:MouseEvent,chart2:any){
+    console.log("brigal");
+
+  }
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -459,8 +349,14 @@ export class GraphSampleComponent implements OnInit {
 
   parseISODate(str: any) {
     return DateTime.fromISO(str);
+
   }
 
 
 
+}
+
+
+class MyScale extends Scale {
+  /* extensions ... */
 }
