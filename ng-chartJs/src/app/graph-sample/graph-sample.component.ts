@@ -13,6 +13,7 @@ import { timer } from 'rxjs';
   styleUrls: ['./graph-sample.component.css']
 })
 export class GraphSampleComponent implements OnInit {
+  yourImage: any;
   chart:Chart;
   chartitem:ChartItem
   DATA_COUNT = 1000;
@@ -25,6 +26,10 @@ export class GraphSampleComponent implements OnInit {
   
 }
   ngOnInit(): void {
+    this.yourImage = new Image(),
+    this.yourImage.src ='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_aCQNH-w_WVSQWkWZxddFqGhIAKmHANb6Ug&usqp=CAU';
+    this.yourImage.width = 14,
+    this.yourImage.height= 14
     this.chartitem = document.getElementById("scattered_chart")as ChartItem ;
     Chart.register(...registerables);
     // Chart.register(zoomPlugin);
@@ -41,7 +46,6 @@ export class GraphSampleComponent implements OnInit {
   loadChart() {
     this.chart = new Chart(this.chartitem, {
       type: 'scatter',
-      
       data: {
         datasets: [
           {
@@ -50,10 +54,14 @@ export class GraphSampleComponent implements OnInit {
             fill: false,
             borderColor: this.CHART_COLORS.red,
             backgroundColor: this.transparentize(this.CHART_COLORS.red, 1),
-            pointHoverRadius: 7,
-            pointHitRadius: 4,
+            //pointHoverRadius: 7,
+            //pointHitRadius: 4,
             //hit:120,
-            pointStyle: 'star',
+            pointRadius: [0,0,0,0,20],
+            pointHoverRadius: [0,0,0,0,20],
+            pointHitRadius: [0,0,0,0,20],
+            pointStyle: ['', '', '', '', this.yourImage],
+            
             pointHoverBackgroundColor: 'blue',
             
           },
@@ -145,15 +153,15 @@ export class GraphSampleComponent implements OnInit {
             },
           }
         },
-        animation: {
-          backgroundColor: {
-            type: "color",
-            from: "red",
-            to: "green",
-            duration: 700,
-            loop: true,
-          }
-        }
+        // animation: {
+        //   backgroundColor: {
+        //     type: "color",
+        //     from: "red",
+        //     to: "green",
+        //     duration: 700,
+        //     loop: true,
+        //   }
+        // }
       },
     }as ChartConfiguration);
     
@@ -357,6 +365,3 @@ export class GraphSampleComponent implements OnInit {
 }
 
 
-class MyScale extends Scale {
-  /* extensions ... */
-}
