@@ -25,25 +25,46 @@ export class GraphSampleComponent implements OnInit {
   this.chart=new Chart(this.chartitem,{type:'scatter',data:{datasets:[]},options:{}})
   
 }
+menuItem(x:Event){
+alert(x);
+
+}
+
+ myFunction(e:Event) {
+  e.preventDefault();
+  e.stopPropagation();
+ // menu.style.left = e.clientX + "px";
+  //menu.style.top = e.clientY + "px";
+  //menu.style.display = "block";
+  alert(e.type);
+  var menu = document.getElementById("contextMenu") as HTMLElement;
+  menu.style.display="inline";
+}
   ngOnInit(): void {
+    //document.getElementById ("temp1")?.addEventListener ("contextmenu", this.myFunction, false);
+    //document.getElementById ("temp1")?.addEventListener("menuItem()",false);
     this.yourImage = new Image(),
     this.yourImage.src ='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_aCQNH-w_WVSQWkWZxddFqGhIAKmHANb6Ug&usqp=CAU';
     this.yourImage.width = 14,
     this.yourImage.height= 14
-    this.chartitem = document.getElementById("scattered_chart")as ChartItem ;
+    this.chartitem = document.getElementById("scattered_chart")as ChartItem ; 
     Chart.register(...registerables);
     // Chart.register(zoomPlugin);
-
+    
     this.loadChart();
+    
+    document.getElementById ("scattered_chart")?.addEventListener ("contextmenu", this.myFunction, false);
+    document.getElementById("menu-item")?.addEventListener('click',this.menuItem,false)
     setInterval(() => {
       this.updateChartData();
       this.chart.update();
+      
     },
-      30000);
+      3000);
   }
-
   
   loadChart() {
+    
     this.chart = new Chart(this.chartitem, {
       type: 'scatter',
       data: {
@@ -54,28 +75,60 @@ export class GraphSampleComponent implements OnInit {
             fill: false,
             borderColor: this.CHART_COLORS.red,
             backgroundColor: this.transparentize(this.CHART_COLORS.red, 1),
-            //pointHoverRadius: 7,
-            //pointHitRadius: 4,
-            //hit:120,
-            pointRadius: [0,0,0,0,20],
-            pointHoverRadius: [0,0,0,0,20],
-            pointHitRadius: [0,0,0,0,20],
-            pointStyle: ['', '', '', '', this.yourImage],
+            pointHoverRadius: 7,
+            pointHitRadius: 4,
+            pointRadius: 2,
+            pointStyle: [ this.yourImage ],
             
             pointHoverBackgroundColor: 'blue',
             
           },
         ]
       },
-      
+       
       options: {
-        onClick: (ev)=>this.clickEventHandler(ev,this.chart),
-        // oncontextmenu:(ev:MouseEvent)=>this.contextmenuEventHandler(ev,this.chart),
-        onContextMenu: (ev:any)=>{console.log("brigal");
+        events: ['click', 'mousemove'],
+        onHover:(e, fields) => {
+          console.log("igall");
+          //console.log(e.native);
+        
+          
         },
+        onClick: (ev)=>this.clickEventHandler(ev,this.chart),
+        // onClick: (e) => {
+        //   this.menuItem(2);
+        // },
+        // oncontextmenu:(ev:MouseEvent)=>this.contextmenuEventHandler(ev,this.chart),
+        // onContextMenu: (ev:any)=>{console.log("brigal");
+        // },
         responsive: true,
         plugins: {
           autocolors: false,
+          afterInit: (chart:any) =>
+            {
+                var menu = document.getElementById("contextMenu");
+                chart.canvas.addEventListener('contextmenu', handleContextMenu, false);
+                chart.canvas.addEventListener('mousedown', handleMouseDown, false);
+
+                function handleContextMenu(e:any){
+                  console.log("iglo");
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if(menu !== null){
+                      menu.style.left = e.clientX + "px";
+                    menu.style.top = e.clientY + "px";
+                    menu.style.display = "block";
+                    }
+                    return(false);
+                }
+
+                function handleMouseDown(e:any){
+                  console.log("brod");
+                  
+                  if(menu !== null)
+                    menu.style.display = "none";
+                }
+            },
           // annotation: {
           //   annotations: {
           //     line1: {
@@ -134,13 +187,13 @@ export class GraphSampleComponent implements OnInit {
             min: 0,
             max: 100,
             ticks: {
-              // Include a dollar sign in the ticks
+              // show only wanted ticks
               callback: (value:number, index, values) => {
                 var ticks = [10 , 40 , 50 , 100];
                 if(ticks.includes(value )) {
                   return value;
                 }
-                return "";
+                return;
               }
             }
           },
@@ -170,6 +223,7 @@ export class GraphSampleComponent implements OnInit {
 
   updateChartData() {
     this.chart.data.datasets[0].data = this.points(this.NUMBER_CFG) as [];
+    //this.chart.data.datasets[0].data.
   }
 
   getPointRepresantationOnhHover(x:ChartEvent): string {
@@ -190,9 +244,13 @@ export class GraphSampleComponent implements OnInit {
     }
     else
      console.log("igal");
+     console.log(ev.native);
   }
-  contextmenuEventHandler(ev:MouseEvent,chart2:any){
-    console.log("brigal");
+  contextmenuEventHandler(/*ev:MouseEvent,chart2:any*/){
+    setTimeout(() => {
+    console.log("brigal");  
+    }, 3000);
+    
 
   }
 

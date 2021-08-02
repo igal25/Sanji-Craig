@@ -1,5 +1,58 @@
+
 <div class='ui-grid-a'>
     <div class='ui-block-a' style='width:60%;'>
-        <canvas id="scattered_chart"></canvas>
+        <canvas id="scattered_chart" ></canvas>
+        <ul id="contextMenu" style="display:none;">
+            <li id="menu-item" class="menu-item" >Only include 2018</li>
+            <li id="menu-item" class="menu-item" >Exclude 2018</li>
+          </ul>
     </div>
+
 </div>
+
+<div id="contextmenu">
+    <div class="list">
+      <div class="item">
+        <i class="fa fa-magic"></i>
+        Autoassign
+      </div>
+      <div class="item">
+        <i class="fa fa-plus-square-o"></i>
+        Assign
+      </div>
+    </div>
+    <div class="list">
+      <div class="item">
+        <i class="fa fa-pencil-square-o"></i>
+        Edit
+      </div>
+      <div class="item">
+        <i class="fa fa-clone"></i>
+        Clone
+      </div>
+    </div>
+    <div class="list">
+      <div class="item">
+        <i class="fa fa-search"></i>
+        Zoom to route
+      </div>
+      <div class="item">
+        <i class="fa fa-bullhorn"></i>
+        Announce task
+      </div>
+    </div>
+    <div class="list">
+      <div class="item">
+        <i class="fa fa-minus-square-o"></i>
+        Unassign
+      </div>
+      <div class="item">
+        <i class="fa fa-chain-broken"></i>
+        Unlink
+      </div>
+      <div class="item">
+        <i class="fa fa-trash"></i>
+        Delete
+      </div>
+    </div>
+  </div>
